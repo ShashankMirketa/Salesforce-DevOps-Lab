@@ -7,5 +7,8 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Say Hello
-        run: echo "Hello Devops"
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: list repository files
+        run: ls -la
