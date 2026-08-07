@@ -10,5 +10,13 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v5
 
-      - name: list repository files
-        run: ls -la
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Check node version
+        run: node --version
+
+      - name: check npm version
+        run: npm --version
