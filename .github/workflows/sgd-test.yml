@@ -1,0 +1,84 @@
+name: SGD Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-sgd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+
+      - name: Show git information
+        run: |
+          echo "=============================="
+          echo "CURRENT COMMIT"
+          echo "=============================="
+          echo "github.sha= ${{github.sha}}"
+
+          echo ""
+          echo "=============================="
+          echo "BEFORE COMMIT"
+          echo "=============================="
+          echo "github.event.before= ${{github.event.before}}"
+
+          echo ""
+          echo "=============================="
+          echo "GIT LOG"
+          echo "==============================="
+          git log --oneline --all --decorate -10
+
+          echo ""
+          echo "=============================="
+          echo "GIT BRANCHES"
+          echo "==============================="
+          git branch -a
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install --global @salesforce/cli
+
+      - name: Install SGD
+        run: |
+          echo 'y' | sf plugins install sfdx-git-delta
+
+      - name: Show SGD version
+        run: |
+          sf plugins
+
+      - name: Create Delta
+        run: |
+          mkdir -p delta
+
+          echo "=============================="
+          echo "SGD input"
+          echo "=============================="
+          echo "FROM= ${{github.event.before}}"
+          echo "TO= ${{github.sha}}"
+
+          echo ""
+          echo "============================="
+          echo "GIT DIFF"
+          echo "============================="
+          git diff "${{github.event.before}}" "${{github.sha}}" --name-status
+
+          echo ""
+          echo "=============================="
+          echo "SGD RUN"
+          echo "=============================="
+
+          sf sgd source delta \
+              --from "${{github.event.before}}" \
+              --to "${{github.sha}}" \
+              --output-dir delta
+
+      - name: Show generated package.xml
+        run: |
+          echo "=============================="
+          echo "GENERATED PACKAGE.XML"
+          echo "=============================="
+
+          cat delta/package.xml
