@@ -37,7 +37,7 @@ jobs:
 
           echo ""
           echo "Does CURRENT Commit exist?"
-          git-cat-file -t "${{github.sha}}"
+          git cat-file -t "${{github.sha}}"
 
           echo ""
           echo "RECENT HISTORY:"
