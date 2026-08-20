@@ -11,7 +11,37 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
+      - name: Verify Git History
+        run: |
+          echo "=============================="
+          echo "GIT OBJECT CHECK"
+          echo "==============================="
+
+          echo "CURRENT HEAD:"
+          git rev-parse HEAD
+
+          echo ""
+          echo "COMMIT BEFORE PUSH"
+          echo "${{github.event.before}}"
+
+          echo ""
+          echo "Current commit:"
+          echo "${{github.sha}}"
+
+          echo ""
+          echo "Does BEFORE Commit exist?"
+          git cat-file -t "${{github.event.before}}"
+
+          echo ""
+          echo "Does CURRENT Commit exist?"
+          git-cat-file -t "${{github.sha}}"
+
+          echo ""
+          echo "RECENT HISTORY:"
+          git log --oneline --decorate --all -10
       - name: Show git information
         run: |
           echo "=============================="
@@ -81,4 +111,4 @@ jobs:
           echo "GENERATED PACKAGE.XML"
           echo "=============================="
 
-          cat delta/package.xml
+          cat delta/package/package.xml
