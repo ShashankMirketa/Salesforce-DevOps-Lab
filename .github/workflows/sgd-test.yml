@@ -50,14 +50,14 @@ jobs:
           echo "LAST SUCCESSFUL HEAD SHA"
           echo "==============================="
 
-          LAST_SUCCESSFUL_SHA = $(gh run list \
-            --workflow=sgd-test.yml
+          LAST_SUCCESSFUL_SHA=$(gh run list \
+            --workflow=sgd-test.yml \ 
             --status=success \
             --limit=1 \
             --json headSha \
             --jq '.[].headSha')
 
-          echo "LAST_SUCCESSFUL_SHA= $LAST_SUCCESSFUL_SHA"
+          echo "LAST_SUCCESSFUL_SHA=$LAST_SUCCESSFUL_SHA"
 
           echo ""
           echo "=============================="
