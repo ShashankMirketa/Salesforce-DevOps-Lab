@@ -20,7 +20,7 @@ jobs:
 
       - name: Check Last successful run
         env:
-          GH_TOKEN: ${{github.token}}
+          GH_TOKEN: ${{github.token}}q
         run: |
           echo "=============================="
           echo "CURRENT WORKFLOW"
@@ -38,24 +38,14 @@ jobs:
           echo "LAST SUCCESSFUL SGD RUN"
           echo "==============================="
 
-          gh run list \
-            --workflow=sgd-test.yml \
-            --status=success \
-            --limit=1 \
-            --json databaseId,headSha,status,conclusion,createdAt \
-            --jq '.[]'
+          gh run list --workflow=sgd-test.yml --status=success --limit=1 --json databaseId,headSha,status,conclusion,createdAt --jq '.[]'
             
           echo ""
           echo "=============================="
           echo "LAST SUCCESSFUL HEAD SHA"
           echo "==============================="
 
-          LAST_SUCCESSFUL_SHA=$(gh run list \
-            --workflow=sgd-test.yml \ 
-            --status=success \
-            --limit=1 \
-            --json headSha \
-            --jq '.[].headSha')
+          LAST_SUCCESSFUL_SHA=$(gh run list --workflow=sgd-test.yml --status=success --limit=1 --json headSha --jq '.[].headSha')
 
           echo "LAST_SUCCESSFUL_SHA=$LAST_SUCCESSFUL_SHA"
 
@@ -154,10 +144,7 @@ jobs:
           echo "SGD RUN"
           echo "=============================="
 
-          sf sgd source delta \
-              --from "${{github.event.before}}" \
-              --to "${{github.sha}}" \
-              --output-dir delta
+          sf sgd source delta --from "${{github.event.before}}" --to "${{github.sha}}" --output-dir delta
 
       - name: Show generated package.xml
         run: |
