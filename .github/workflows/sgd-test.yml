@@ -130,6 +130,49 @@ jobs:
         run: |
           sf plugins
 
+      - name: Compare SGD Baselines
+        env:
+          GH_TOKEN: ${{github.token}}
+        run: |
+          echo "=============================="
+          echo "GET LAST SUCCESSFUL SHA"
+          echo "=============================="
+
+          LAST_SUCCESSFUL_SHA=$(gh run list --workflow=sgd-test.yml --status=success --limit=1 --json headSha --jq '.[].headSha')
+
+          echo "Event Before = ${{github.event.before}}"
+          echo "LAST_SUCCESSFUL= $LAST_SUCCESSFUL_SHA"
+          echo "Current = ${{github.sha}}"
+
+          echo ""
+          echo "=============================="
+          echo "DELTA A Event Before -> Current"
+          echo "=============================="
+
+          mkdir -p delta-before
+          git diff "${{github.event.before}}" "${{github.sha}}" --name-status
+
+          sf sgd source delta --from "${{github.event.before}}" --to "${{github.sha}}" --output-dir delta-before
+
+          echo ""
+          echo "DELTA A PACKAGE.XML"
+          cat delta-before/package/package.xml
+
+
+          echo ""
+          echo "=============================="
+          echo "DELTA B Last Successful -> Current"
+          echo "=============================="
+
+          mkdir -p delta-success
+          git diff "$LAST_SUCCESSFUL_SHA" "${{github.sha}}" --name-status
+
+          sf sgd source delta --from "$LAST_SUCCESSFUL_SHA" --to "${{github.sha}}" --output-dir delta-success
+
+          echo ""
+          echo "DELTA B PACKAGE.XML"
+          cat delta-success/package/package.xml
+
       - name: Create Delta
         run: |
           mkdir -p delta
