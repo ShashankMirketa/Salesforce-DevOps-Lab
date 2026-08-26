@@ -153,3 +153,8 @@ jobs:
           echo "=============================="
 
           cat delta/package/package.xml
+
+      - name: INTENTIONAL FAILURE
+        run: |
+          echo "This run is intentionally failing for the SGD Experiment"
+          exit 1
