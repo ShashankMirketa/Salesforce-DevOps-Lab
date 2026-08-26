@@ -20,7 +20,7 @@ jobs:
 
       - name: Check Last successful run
         env:
-          GH_TOKEN: ${{github.token}}q
+          GH_TOKEN: ${{github.token}}
         run: |
           echo "=============================="
           echo "CURRENT WORKFLOW"
@@ -54,7 +54,7 @@ jobs:
           echo "COMPARISON"
           echo "==============================="
 
-          echo "gitub.event.before = ${{github.event.before}}"
+          echo "github.event.before = ${{github.event.before}}"
           echo "latest successful = $LAST_SUCCESSFUL_SHA"
           echo "github.sha = ${{github.sha}}"
 
