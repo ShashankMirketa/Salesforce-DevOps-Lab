@@ -58,6 +58,13 @@ jobs:
           echo "latest successful = $LAST_SUCCESSFUL_SHA"
           echo "github.sha = ${{github.sha}}"
 
+      - name: Inspect Successful run
+        env:
+          GH_TOKEN: ${{github.token}}
+        run: |
+          echo "ALL RECENT SUCCESSFUL RUNS"
+          gh run list --workflow=sgd-test.yml --status=success --limit=10 --json databaseId,headSha,status,conclusion,createdAt --jq '.[]'
+
       - name: Verify Git History
         run: |
           echo "=============================="
