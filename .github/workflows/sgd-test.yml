@@ -203,8 +203,3 @@ jobs:
           echo "=============================="
 
           cat delta/package/package.xml
-
-      - name: Intentional Failure
-        run: |
-          echo "Intentional failure"
-          exit 1
