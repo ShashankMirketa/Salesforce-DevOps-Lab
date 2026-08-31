@@ -24,6 +24,6 @@ jobs:
         run: |
           sf --version
 
-      - name: Validate Source
+      - name: Check Salesforce Project
         run: |
-          sf project validate source --source-dir force-app --json
+          sf project generate manifest --source-dir force-app --output-dir manifest
