@@ -207,4 +207,3 @@ jobs:
       - name: Intentional CI Failure
         run: |
           echo "Testing failed CI protection"
-          exit 1
