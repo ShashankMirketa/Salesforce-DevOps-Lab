@@ -203,3 +203,7 @@ jobs:
           echo "=============================="
 
           cat delta/package/package.xml
+
+      - name: Intentional CI Failure
+        run: |
+          echo "Testing failed CI protection"

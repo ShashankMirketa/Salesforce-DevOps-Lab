@@ -27,3 +27,8 @@ jobs:
       - name: Check Salesforce Project
         run: |
           sf project generate manifest --source-dir force-app --output-dir manifest
+
+      - name: Intentional CI Failure
+        run: |
+          echo "Testing PR CI failure"
+          exit 1
