@@ -31,4 +31,3 @@ jobs:
       - name: Intentional CI Failure
         run: |
           echo "Testing PR CI failure"
-          exit 1
