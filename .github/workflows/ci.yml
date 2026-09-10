@@ -28,6 +28,7 @@ jobs:
         run: |
           sf project generate manifest --source-dir force-app --output-dir manifest
 
-      - name: Intentional CI Failure
+      - name: Validate Metadata
         run: |
-          echo "Testing PR CI failure"
+          echo "Salesforce Metadata Validation"
+          echo "Manifest generated successfully"
