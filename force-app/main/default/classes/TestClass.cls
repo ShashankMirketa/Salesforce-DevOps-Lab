@@ -10,3 +10,4 @@ public with sharing class TestClass {
 }
 // direct main test
 // status check test
+//CI Validation test
