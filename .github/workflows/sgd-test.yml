@@ -189,7 +189,7 @@ jobs:
           echo ""
           echo "=============================="
           echo "GIT DIFF"
-          echo "=============================="
+          echo "==============================="
 
           git diff "$LAST_SUCCESSFUL_SHA" "${{ github.sha }}" --name-status
 
@@ -199,7 +199,7 @@ jobs:
           echo "=============================="
 
           rm -rf delta
-
+          mkdir -p delta
           sf sgd source delta --from "$LAST_SUCCESSFUL_SHA" --to "${{ github.sha }}" --output-dir delta
 
           echo ""
