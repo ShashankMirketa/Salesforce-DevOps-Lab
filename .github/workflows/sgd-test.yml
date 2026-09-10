@@ -174,27 +174,40 @@ jobs:
           cat delta-success/package/package.xml
 
       - name: Create Delta
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          mkdir -p delta
+          echo "=============================="
+          echo "GET LAST SUCCESSFUL SHA"
+          echo "=============================="
 
-          echo "=============================="
-          echo "SGD input"
-          echo "=============================="
-          echo "FROM= ${{github.event.before}}"
-          echo "TO= ${{github.sha}}"
+          LAST_SUCCESSFUL_SHA=$(gh run list --workflow=sgd-test.yml --status=success --limit=1 --json headSha --jq '.[].headSha')
+
+          echo "LAST_SUCCESSFUL_SHA=$LAST_SUCCESSFUL_SHA"
+          echo "CURRENT_SHA=${{ github.sha }}"
 
           echo ""
-          echo "============================="
+          echo "=============================="
           echo "GIT DIFF"
-          echo "============================="
-          git diff "${{github.event.before}}" "${{github.sha}}" --name-status
+          echo "=============================="
+
+          git diff "$LAST_SUCCESSFUL_SHA" "${{ github.sha }}" --name-status
 
           echo ""
           echo "=============================="
-          echo "SGD RUN"
+          echo "CREATE SGD DELTA"
           echo "=============================="
 
-          sf sgd source delta --from "${{github.event.before}}" --to "${{github.sha}}" --output-dir delta
+          rm -rf delta
+
+          sf sgd source delta --from "$LAST_SUCCESSFUL_SHA" --to "${{ github.sha }}" --output-dir delta
+
+          echo ""
+          echo "=============================="
+          echo "GENERATED PACKAGE.XML"
+          echo "=============================="
+
+          cat delta/package/package.xml
 
       - name: Show generated package.xml
         run: |
