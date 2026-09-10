@@ -189,7 +189,7 @@ jobs:
           echo ""
           echo "=============================="
           echo "GIT DIFF"
-          echo "=============================="
+          echo "==============================="
 
           git diff "$LAST_SUCCESSFUL_SHA" "${{ github.sha }}" --name-status
 
