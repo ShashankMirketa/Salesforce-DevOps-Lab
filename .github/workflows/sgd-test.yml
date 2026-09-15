@@ -217,6 +217,24 @@ jobs:
 
           cat delta/package/package.xml
 
-      - name: Intentional CI Failure
+      - name: Authenticate Salesforce
+        env:
+          SFDX_AUTH_URL: ${{secrets.SFDX_AUTH_URL}}
         run: |
-          echo "Testing failed CI protection"
+          echo "$SFDX_AUTH_URL" > sfdx-auth-url.txt sf org login sfdx-url --sfdx-url-file sfdx-auth-url.txt --alias target-org
+          rm -f sfdx-auth-url.txt
+          echo "Authenticated orgs:"
+          sf org list
+
+      - name: Deploy Delta to Salesforce
+        run: |
+          echo "=============================="
+          echo "DEPLOY DELTA TO SALESFORCE"
+          echo "=============================="
+
+          if ! grep -q "<types>" delta/package/package.xml; then
+            echo "No Salesforce metadata in delta. Nothing to deploy."
+            exit 0
+          fi
+
+          sf project deploy start --manifest delta/package/package.xml --target-org target-org --wait 30 --test-level NoTestRun
