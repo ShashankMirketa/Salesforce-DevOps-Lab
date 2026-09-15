@@ -1,0 +1,61 @@
+name: Deploy to Dev Sandbox
+
+on:
+  push:
+    branches: [develop]
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install Salesforce CLI and SGD
+        run: |
+          npm install --global @salesforce/cli
+          echo 'y' | sf plugins install sfdx-git-delta
+
+      - name: Resolve Baselines
+        id: baseline
+        run: |
+          BASELINE_TAG="last-deploy-dev"
+          if git rev-parse "$BASELINE_TAG" >/dev/null 2>&1; then
+            echo "sha=$(git rev-parse "$BASELINE_TAG")" >> "$GITHUB_OUTPUT"
+          else
+            echo "sha=$(git hash-object -t tree /dev/null)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create delta
+        run: |
+          rm -rf delta
+          mkdir -p delta
+          sf sgd source delta --from "${{ steps.baseline.outputs.sha }}" --to "${{ github.sha }}" --output-dir delta
+          cat delta/package/package.xml
+
+      - name: Authenticate
+        env:
+          SFDX_AUTH_URL: ${{secrets.SFDX_AUTH_URL}}
+        run: |
+          printf '%s' "$SFDX_AUTH_URL" > sfdx-auth-url.txt
+          sf org login sfdx-url --sfdx-url-file sfdx-auth-url.txt --alias target-org
+          rm -f sfdx-auth-url.txt
+
+      - name: Deploy
+        run: |
+          if grep -q "<types>" delta/package/package.xml; then
+              sf project deploy start --manifest delta/package/package.xml --target-org target-org --wait 30 --test-level NoTestRun
+          else
+              echo "Nothing to deploy"
+          fi
+
+      - name: Move Baseline tag
+        run: |
+          git tag -f last-deploy-dev "${{github.sha}}"
+          git push origin refs/tags/last-deploy-dev --force
