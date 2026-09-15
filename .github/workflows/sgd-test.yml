@@ -221,10 +221,12 @@ jobs:
         env:
           SFDX_AUTH_URL: ${{secrets.SFDX_AUTH_URL}}
         run: |
-          echo "$SFDX_AUTH_URL" > sfdx-auth-url.txt sf org login sfdx-url --sfdx-url-file sfdx-auth-url.txt --alias target-org
+          printf '%s' "$SFDX_AUTH_URL" > sfdx-auth-url.txt
+          wc -c sfdx-auth-url.txt
+          sf org login sfdx-url --sfdx-url-file sfdx-auth-url.txt --alias target-org
           rm -f sfdx-auth-url.txt
-          echo "Authenticated orgs:"
-          sf org list
+          echo "Verifying connection:"
+          sf org display --target-org target-org --json | jq -r '.result.username, .result.instanceUrl'
 
       - name: Deploy Delta to Salesforce
         run: |
