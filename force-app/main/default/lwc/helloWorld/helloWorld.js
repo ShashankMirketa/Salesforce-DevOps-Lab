@@ -1,5 +1,3 @@
 import { LightningElement } from "lwc";
 
-export default class HelloWorld extends LightningElement {
-  message = "Hello Devops1";
-}
+export default class HelloWorld extends LightningElement {}
